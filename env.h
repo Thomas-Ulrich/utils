@@ -28,18 +28,9 @@ class Env {
   public:
   template <typename T>
   static auto getOptional(const std::string& name) -> std::optional<T> {
-    if (cache.find(name) == cache.end()) {
-      char* value = std::getenv(name.c_str());
-      if (value == nullptr) {
-        cache[name] = std::optional<std::string>();
-      } else {
-        cache[name] = std::make_optional<std::string>(value);
-      }
-    }
-
-    const auto value = cache.at(name);
-    if (cache.at(name).has_value()) {
-      return std::make_optional<T>(StringUtils::parse<T>(value.value()));
+    const char* value = std::getenv(name.c_str());
+    if (value != nullptr) {
+      return std::make_optional<T>(StringUtils::parse<T>(std::string(value)));
     } else {
       return std::optional<T>();
     }
